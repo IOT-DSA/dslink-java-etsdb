@@ -260,22 +260,21 @@ public class Utils {
         if (file.isDirectory()) {
             // Recurse to leaves.
             File[] files = file.listFiles();
+            boolean empty = true;
             if (files != null && files.length > 0) {
                 for (File subFile : files) {
-                    if (subFile.isDirectory()) {
-                        if (!deleteEmptyDirs(subFile)) {
-                            return false;
-                        }
-                    } else {
-                        return false;
+                    if (!deleteEmptyDirs(subFile)) {
+                        empty = false;
                     }
                 }
             }
-            if (!file.delete()) {
-                logger.error("Failed to delete empty dir: {}", file.getPath());
-                return false;
+            if (empty) {
+                if (!file.delete()) {
+                    logger.error("Failed to delete empty dir: {}", file.getPath());
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
